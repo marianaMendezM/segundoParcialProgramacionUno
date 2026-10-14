@@ -7,14 +7,14 @@ public class Reserva {
     private String id;
     private Cliente cliente;
     private final LocalDate fecha; // Atributo inmutable
-    private final Turno turnoo; // Atributo inmutable
+    private final Turno turno; // Atributo inmutable
     private EstadoReserva estado;
     private Operador operador;
     private List<DetalleReserva> listDetalleReserva;
 
     public Reserva(LocalDate fecha, Turno turno, String id, Cliente cliente, EstadoReserva estado, Operador operador, List<DetalleReserva> listDetalleReserva) {
         this.fecha = fecha;
-        this.turnoo = turno;
+        this.turno = turno;
         this.id = id;
         this.cliente = cliente;
         this.estado = EstadoReserva.SOLICITADA;
