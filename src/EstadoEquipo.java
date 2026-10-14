@@ -1,0 +1,3 @@
+public enum EstadoEquipo {
+    DISPONIBLE, MANTENIMIENTO,FUERA_SERVICIO;
+}
