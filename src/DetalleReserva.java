@@ -8,6 +8,9 @@ public class DetalleReserva {
         this.equipo = equipo;
         this.cantidadHoras = cantidadHoras;
     }
+    public double calcularSubtotal() {
+        return equipo.calcularCostoAlquiler(cantidadHoras);
+    }
 
     public String getId() {
         return id;

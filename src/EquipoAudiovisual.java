@@ -11,6 +11,7 @@ public abstract class EquipoAudiovisual {
         this.estado = estado;
     }
 
+    public abstract double calcularCostoAlquiler(int horas);
     public String getCodigo() {
         return codigo;
     }

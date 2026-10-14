@@ -10,6 +10,14 @@ public class Dron extends EquipoAudiovisual{
         this.costoHora = costoHora;
     }
 
+    @Override
+    public double calcularCostoAlquiler(int horas){
+        double total = costoHora * horas;
+        if (bateriaAdicional) {
+            total += 20000.0;
+        }
+        return total;
+    }
     public int getAutonomiaVuelo() {
         return autonomiaVuelo;
     }

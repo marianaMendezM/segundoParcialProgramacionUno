@@ -10,6 +10,15 @@ public class Camara extends EquipoAudiovisual {
         this.resolucionMaxima = resolucionMaxima;
     }
 
+    @Override
+    public double calcularCostoAlquiler(int horas){
+        double total = costoHora * horas;
+        if (estabilizador) {
+            total +=15000.0;
+        }
+        return total;
+    }
+
     public double getCostoHora() {
         return costoHora;
     }

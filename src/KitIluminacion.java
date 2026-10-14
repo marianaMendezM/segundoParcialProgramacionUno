@@ -9,6 +9,14 @@ public class KitIluminacion extends  EquipoAudiovisual{
         this.controlInalambrico = controlInalambrico;
         this.costoHora = costoHora;
     }
+    @Override
+    public double calcularCostoAlquiler(int horas){
+        double total = costoHora * horas;
+        if (controlInalambrico){
+        total += 12000.0;
+        }
+        return total;
+    }
 
     public int getCantidadLuces() {
         return cantidadLuces;
