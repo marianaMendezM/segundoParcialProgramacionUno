@@ -1,20 +1,21 @@
-public class Camara extends EquipoAudiovisual {
-    private double costoHora=12000;
-    private  boolean estabilizador;
-    private  String resolucionMaxima;
+public  class Camara extends EquipoAudiovisual {
+    private double costoHora ;
+    private boolean estabilizador;
+    private String resolucionMaxima;
 
-    public Camara(String codigo, String marca, String modelo, EstadoEquipo estado, double costoHora, boolean estabilizador, String resolucionMaxima) {
+
+    public Camara(String codigo, String marca, String modelo, EstadoEquipo estado, boolean estabilizador, String resolucionMaxima) {
         super(codigo, marca, modelo, estado);
-        this.costoHora = costoHora;
+        this.costoHora = 12000.0; // el costo lo podenos fijo , ya que nos dice que la base es de este valor
         this.estabilizador = estabilizador;
         this.resolucionMaxima = resolucionMaxima;
     }
 
     @Override
-    public double calcularCostoAlquiler(int horas){
+    public double calcularCostoAlquiler(int horas) {
         double total = costoHora * horas;
         if (estabilizador) {
-            total +=15000.0;
+            total += 15000.0;
         }
         return total;
     }

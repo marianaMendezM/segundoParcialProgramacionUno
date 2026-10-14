@@ -1,23 +1,24 @@
-public class Dron extends EquipoAudiovisual{
+public class Dron extends EquipoAudiovisual {
     private int autonomiaVuelo;
     private boolean bateriaAdicional;
-    private double costoHora=18000;
+    private double costoHora ;
 
-    public Dron(String codigo, String marca, String modelo, EstadoEquipo estado, int autonomiaVuelo, boolean bateriaAdicional, double costoHora) {
+    public Dron(String codigo, String marca, String modelo, EstadoEquipo estado, int autonomiaVuelo, boolean bateriaAdicional) {
         super(codigo, marca, modelo, estado);
         this.autonomiaVuelo = autonomiaVuelo;
         this.bateriaAdicional = bateriaAdicional;
-        this.costoHora = costoHora;
+        this.costoHora = 18000.0; // se lo asignamos por que el parcial dice que este es el valor base
     }
 
     @Override
-    public double calcularCostoAlquiler(int horas){
+    public double calcularCostoAlquiler(int horas) {
         double total = costoHora * horas;
         if (bateriaAdicional) {
             total += 20000.0;
         }
         return total;
     }
+
     public int getAutonomiaVuelo() {
         return autonomiaVuelo;
     }

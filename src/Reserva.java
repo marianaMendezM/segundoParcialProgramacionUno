@@ -6,42 +6,42 @@ import java.util.List;
 public class Reserva {
     private String id;
     private Cliente cliente;
-    private final LocalDate fecha; // Atributo inmutable
-    private final Turno turno; // Atributo inmutable
+    private final LocalDate fecha; // Atributo inmutable que nos pide el parcial, no es record por q la clase no es completamente inmutable
+    private final Turno turno;   // Atributo inmutable que nos pide el parcial, no es record por q la clase no es completamente inmutable
     private EstadoReserva estado;
     private Operador operador;
     private List<DetalleReserva> listDetalleReserva;
 
-    public Reserva(LocalDate fecha, Turno turno, String id, Cliente cliente, EstadoReserva estado, Operador operador, List<DetalleReserva> listDetalleReserva) {
-        this.fecha = fecha;
-        this.turno = turno;
+    public Reserva(String id, Cliente cliente, LocalDate fecha, Turno turno) {
         this.id = id;
         this.cliente = cliente;
+        this.fecha = fecha;
+        this.turno = turno;
         this.estado = EstadoReserva.SOLICITADA;
         this.listDetalleReserva = new ArrayList<>();
     }
-
+    //agrego un equipo audioVisual
     public boolean agregarEquipo(EquipoAudiovisual equipo, int horas) {
         if (equipo.getEstado() != EstadoEquipo.DISPONIBLE) {
-            JOptionPane.showMessageDialog(null, "⚠ Error ⚠ " + equipo.getCodigo() + " no esta disponible para alquiler");
+            JOptionPane.showMessageDialog(null, "⚠ Error: " + equipo.getCodigo() + " no está disponible para alquiler.");
             return false;
         }
         for (DetalleReserva detalle : listDetalleReserva) {
             if (detalle.getEquipo().getCodigo().equalsIgnoreCase(equipo.getCodigo())) {
-                JOptionPane.showMessageDialog(null, "⚠ Error ⚠ " + "\n" + "El quipo no esta disponible para alquiler");
+                JOptionPane.showMessageDialog(null, "⚠ Error: El equipo ya se encuentra agregado a esta reserva.");
                 return false;
             }
         }
-
-        String detalleId = "Codigo: " + (listDetalleReserva.size() + 1);
+        String detalleId = "DET-" + (listDetalleReserva.size() + 1);
         listDetalleReserva.add(new DetalleReserva(detalleId, equipo, horas));
         return true;
     }
-
+    //asigno el operador a la reserva
     public void asignarOperador(Operador operador) {
         this.operador = operador;
     }
 
+    //calculo el subtotal
     public double calcularTotal() {
         double total = 0.0;
         for (DetalleReserva detalle : listDetalleReserva) {
@@ -62,12 +62,33 @@ public class Reserva {
     public boolean setEstado(EstadoReserva nuevoEstado) {
         if (this.estado == EstadoReserva.CANCELADA || this.estado == EstadoReserva.FINALIZADA) {
             if (nuevoEstado == EstadoReserva.CONFIRMADA) {
-                JOptionPane.showMessageDialog(null, "⚠ Error ⚠ " + "\n" + "Una reserva cancelada o finalizada no puede regresar al estado confirmada.");
+                JOptionPane.showMessageDialog(null, "⚠ Error: Una reserva cancelada o finalizada no puede regresar al estado confirmada.");
                 return false;
             }
         }
         this.estado = nuevoEstado;
         return true;
+    }
+
+    // GETTERS
+    public String getId() {
+        return id;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public EstadoReserva getEstado() {
+        return estado;
     }
 
     public Operador getOperador() {
@@ -77,29 +98,5 @@ public class Reserva {
     public List<DetalleReserva> getListDetalleReserva() {
         return listDetalleReserva;
     }
-
-    public String getId() {
-        return id;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public Turno getTurnoo() {
-        return turnoo;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public EstadoReserva getEstado() {
-        return estado;
-    }
-
-
-
 }
-
 

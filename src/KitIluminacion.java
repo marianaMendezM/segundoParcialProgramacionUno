@@ -1,19 +1,20 @@
-public class KitIluminacion extends  EquipoAudiovisual{
+public class KitIluminacion extends EquipoAudiovisual {
     private int cantidadLuces;
     private boolean controlInalambrico;
-    private double costoHora=10000;
+    private double costoHora ;
 
-    public KitIluminacion(String codigo, String marca, String modelo, EstadoEquipo estado, int cantidadLuces, boolean controlInalambrico, double costoHora) {
+    // Constructor 1: Asigna tarifa por defecto de $10.000 (Usado en el Main)
+    public KitIluminacion(String codigo, String marca, String modelo, EstadoEquipo estado, int cantidadLuces, boolean controlInalambrico) {
         super(codigo, marca, modelo, estado);
         this.cantidadLuces = cantidadLuces;
         this.controlInalambrico = controlInalambrico;
-        this.costoHora = costoHora;
+        this.costoHora = 10000.0; // se lo asignamos porque en el parcial nos dice que ese es el valor base
     }
     @Override
-    public double calcularCostoAlquiler(int horas){
+    public double calcularCostoAlquiler(int horas) {
         double total = costoHora * horas;
-        if (controlInalambrico){
-        total += 12000.0;
+        if (controlInalambrico) {
+            total += 12000.0;
         }
         return total;
     }
