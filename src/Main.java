@@ -65,7 +65,7 @@ public class Main {
                     break;
 
                 default:
-                    if (opcion != 0) mostrarMensaje("Esta opción es inavlida, Por favor reintenta");
+                    if (opcion != 0) mostrarMensaje("Esta opción es invalida, Por favor reintenta");
                     break;
             }
         } while (opcion!=12);
@@ -93,13 +93,13 @@ public class Main {
     }
 
     private static LocalDate pedirFecha(String titulo) {
-        String entrada = pedirTexto(titulo + "\n\nIngrese la fecha en formato AAAA-MM-DD (ej: 2026-10-15):");
+        String entrada = pedirTexto(titulo + "\n\n Ingrese la fecha en formato AAAA-MM-DD (ej: 2026-10-15):");
         if (entrada == null || entrada.isEmpty()) return null;
 
         try {
             return LocalDate.parse(entrada);
         } catch (Exception e) {
-            mostrarMensaje("⚠ Error: La fecha: '" + entrada + "' no es válida.\n Debe ingresar una fecha real en formato AAAA-MM-DD (ej: 2026-10-15).");
+            mostrarMensaje("⚠ Error: La fecha ⚠ '" + entrada + "' no es válida.\n Debe ingresar una fecha real en formato AAAA-MM-DD (ej: 2026-10-15).");
             return null;
         }
     }
@@ -124,12 +124,12 @@ public class Main {
     }
     // Función para registrar los datos del cliente
     private static void registrarCliente(Empresa empresa) {
-        String id = pedirTexto("Cedula del Cliente:");
+        String id = pedirTexto("Cedula del cliente:");
         if (id == null || id.isEmpty()) return;
-        String nombre = pedirTexto("Nombre Completo:");
+        String nombre = pedirTexto("Nombre completo:");
         if (nombre == null || nombre.isEmpty()) return;
         String telefono = pedirTexto("Teléfono:");
-        String correo = pedirTexto("Correo Electrónico:");
+        String correo = pedirTexto("Correo electrónico:");
 
         if (empresa.registrarCliente(new Cliente(id, nombre, telefono, correo))) {
             mostrarMensaje("¡Cliente registrado exitosamente! ✔");
@@ -137,7 +137,10 @@ public class Main {
     }
     // Función para registrar los datos de  los equipos, con cada uno de las 3 opciones que tenemos (camara,dron, kit)
     private static void registrarEquipo(Empresa empresa) {
-        int tipo = pedirEntero("Seleccione el número del tipo de Equipo:\n1. Cámara\n2. Dron\n3. Kit de Iluminación");
+        int tipo = pedirEntero("Seleccione el número del tipo de Equipo: \n" +
+                "1. Cámara\n" +
+                "2. Dron\n" +
+                "3. Kit de Iluminación");
         if (tipo < 1 || tipo > 3) return;
 
         String codigo = pedirTexto("Código único del equipo:");
@@ -162,9 +165,9 @@ public class Main {
     }
     // Función para registrar los datos del operador
     private static void registrarOperador(Empresa empresa) {
-        String id = pedirTexto("ID del Operador:");
+        String id = pedirTexto("Cedula del Operador:");
         if (id == null || id.isEmpty()) return;
-        String nombre = pedirTexto("Nombre Completo:");
+        String nombre = pedirTexto("Nombre Completo: ");
         String certificacion = pedirTexto("Certificación:");
         String experiencia = pedirTexto("Años de Experiencia:");
 
@@ -174,10 +177,10 @@ public class Main {
     }
     // creacion de la reserva, con su turno y  cliente respectivo
     private static void crearReserva(Empresa empresa) {
-        String idReserva = pedirTexto("Código para la Reserva:");
+        String idReserva = pedirTexto("Código para la Reserva: ");
         if (idReserva == null || idReserva.isEmpty()) return;
 
-        String idCliente = pedirTexto("Cedula del Cliente:");
+        String idCliente = pedirTexto("Cedula del Cliente: ");
         if (idCliente == null || idCliente.isEmpty()) return;
 
         Cliente cliente = empresa.buscarClienteId(idCliente);
@@ -185,12 +188,15 @@ public class Main {
             mostrarMensaje("⚠ Error ⚠ El cliente con cedula: '" + idCliente + "' no existe.");
             return;
         }
-        LocalDate fecha = pedirFecha("CREACIÓN DE RESERVA");
+        LocalDate fecha = pedirFecha("── ✦✦ Creación de reserva ✦✦──");
         if (fecha == null) return;
 
-        int turnoNum = pedirEntero("Seleccione el número del Turno:\n1. MAÑANA\n2. TARDE\n3. NOCHE");
+        int turnoNum = pedirEntero("Seleccione el número del Turno:\n" +
+                "1. Mañana\n" +
+                "2. Tarde\n" +
+                "3. Noche");
         if (turnoNum < 1 || turnoNum > 3) {
-            mostrarMensaje("⚠ Error⚠ Opción de turno no válida.");
+            mostrarMensaje("⚠ Error ⚠ Opción de turno no válida.");
             return;
         }
 
@@ -248,7 +254,7 @@ public class Main {
         // SI PASÓ LA VALIDACIÓN, SE AGREGA AQUÍ
         if (reserva.agregarEquipo(eq, horas)) {
             mostrarMensaje("¡Equipo agregado a la reserva exitosamente! ✔\n\n"
-                    + "• Valor acumulado de la reserva: $" + reserva.calcularTotal());
+                    + "✦Valor acumulado de la reserva: $" + reserva.calcularTotal());
         }
     }
 
@@ -266,7 +272,7 @@ public class Main {
             return;
         }
         res.asignarOperador(op);
-        mostrarMensaje("Operador asignado exitosamente! ✔");
+        mostrarMensaje("¡Operador asignado exitosamente! ✔");
     }
 
     private static void cambiarEstadoReserva(Empresa empresa){
@@ -277,9 +283,9 @@ public class Main {
             return;
         }
         int opcionEstado = pedirEntero("Estado Actual: " + res.getEstado() + "\n Seleccione el nuevo Estado:\n"
-                + "1. CONFIRMADA\n"
-                + "2. CANCELADA\n"
-                + "3. FINALIZADA");
+                + "1. Confirmada\n"
+                + "2. Cancelada\n"
+                + "3. Finalizada");
         EstadoReserva nuevoEstado = null;
         if (opcionEstado == 1) nuevoEstado = EstadoReserva.CONFIRMADA;
         else if (opcionEstado == 2) nuevoEstado = EstadoReserva.CANCELADA;
@@ -291,13 +297,13 @@ public class Main {
         }
     }
     private static void consultarEquiposDisponibles(Empresa empresa) {
-        LocalDate fecha = pedirFecha("Consulta de disponibilidad ");
+        LocalDate fecha = pedirFecha(" . ݁₊ ⊹ . ݁ Consulta de disponibilidad ݁ . ⊹ ₊ ݁. ");
         if (fecha == null)
             return;
-        int tNum = pedirEntero("Seleccione el Turno:\n" +
-                "1. MAÑANA\n" +
-                "2. TARDE \n" +
-                "3. NOCHE");
+        int tNum = pedirEntero("✴Seleccione el numero del turno:\n" +
+                "1. Mañana\n" +
+                "2. Tarde \n" +
+                "3. Noche");
         if (tNum < 1 || tNum > 3) {
             mostrarMensaje("⚠ Error ⚠  Opcion de turno no valida.");
             return;
@@ -326,7 +332,7 @@ public class Main {
         mostrarMensaje(reporte);
     }
     private static void consultarReservasCliente(Empresa empresa) {
-        String idCliente = pedirTexto("Documento del Cliente: ");
+        String idCliente = pedirTexto("Documento del Cliente ");
         if (idCliente == null || idCliente.isEmpty()) return;
 
         List<Reserva> lista = empresa.consultarReservaCliente(idCliente);
@@ -344,17 +350,17 @@ public class Main {
         mostrarMensaje(reporte);
     }
     private static void consultarValorReserva(Empresa empresa) {
-        String idR = pedirTexto("Codigo de la Reserva:");
-        if (idR == null || idR.isEmpty()) return;
+        String idReserva = pedirTexto("Codigo de la Reserva ");
+        if (idReserva == null || idReserva.isEmpty()) return;
 
-        Reserva resultado = empresa.buscarReservaId(idR);
+        Reserva resultado = empresa.buscarReservaId(idReserva);
         if (resultado != null) {
-            mostrarMensaje(" CONSULTA DE VALOR EN TIEMPO REAL \n\n"
-                    + "• Reserva ID: " + resultado.getId() + "\n"
-                    + "• Estado actual: " + resultado.getEstado() + "\n"
-                    + "• Equipos agregados: " + resultado.getListDetalleReserva().size() + "\n"
-                    + "-----------------------------------\n"
-                    + "• Valor Total Acumulado: $" + resultado.calcularTotal());
+            mostrarMensaje("˚｡⋆｡˚☽˚｡⋆ Consulta de valor en tiempo real ˚｡⋆｡˚☽˚｡⋆ \n\n"
+                    + "♥ Reserva ID: " + resultado.getId() + "\n"
+                    + "♥ Estado actual: " + resultado.getEstado() + "\n"
+                    + "♥ Equipos agregados: " + resultado.getListDetalleReserva().size() + "\n"
+                    + "────────────────୨ৎ────────────────\n"
+                    + "♥ Valor Total Acumulado: $" + resultado.calcularTotal());
         } else {
             mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
         }
