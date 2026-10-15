@@ -172,6 +172,37 @@ public class Main {
             mostrarMensaje("¡Operador registrado exitosamente!");
         }
     }
+    // creacion de la reserva, con su turno y  cliente respectivo
+    private static void crearReserva(Empresa empresa) {
+        String idReserva = pedirTexto("Código para la Reserva:");
+        if (idReserva == null || idReserva.isEmpty()) return;
+
+        String idCliente = pedirTexto("Cedula del Cliente:");
+        if (idCliente == null || idCliente.isEmpty()) return;
+
+        Cliente cliente = empresa.buscarClientePorId(idCliente);
+        if (cliente == null) {
+            mostrarMensaje("⚠️ Error: El cliente con cedula '" + idCliente + "' no existe.");
+            return;
+        }
+
+        LocalDate fecha = pedirFecha("CREACIÓN DE RESERVA");
+        if (fecha == null) return;
+
+        int turnoNum = pedirEntero("Seleccione el número del Turno:\n1. MANIANA\n2. TARDE\n3. NOCHE");
+        if (turnoNum < 1 || turnoNum > 3) {
+            mostrarMensaje("⚠️ Error: Opción de turno no válida.");
+            return;
+        }
+
+        Turno turno = Turno.MANIANA;
+        if (turnoNum == 2) turno = Turno.TARDE;
+        else if (turnoNum == 3) turno = Turno.NOCHE;
+
+        if (empresa.registrarReserva(new Reserva(idReserva, cliente, fecha, turno))) {
+            mostrarMensaje("¡Reserva creada exitosamente en estado SOLICITADA!");
+        }
+    }
 
 }
 
