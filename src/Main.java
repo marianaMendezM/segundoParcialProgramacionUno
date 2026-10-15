@@ -46,7 +46,7 @@ public class Main {
                     agregarEquipoAReserva(empresa);
                     break;
                 case 7:
-                    asignarOperadorAReserva(empresa);
+                    asignarOperadorReserva(empresa);
                     break;
                 case 8:
                     cambiarEstadoReserva(empresa);
@@ -99,7 +99,7 @@ public class Main {
         try {
             return LocalDate.parse(entrada);
         } catch (Exception e) {
-            mostrarMensaje("⚠ Error: La fecha '" + entrada + "' no es válida.\nDebe ingresar una fecha real en formato AAAA-MM-DD (ej: 2026-10-15).");
+            mostrarMensaje("⚠ Error: La fecha: '" + entrada + "' no es válida.\n Debe ingresar una fecha real en formato AAAA-MM-DD (ej: 2026-10-15).");
             return null;
         }
     }
@@ -119,7 +119,7 @@ public class Main {
         if (direccion == null || direccion.isEmpty()) return;
 
         if (empresa.registrarSede(new Sede(id, nombre, direccion))) {
-            mostrarMensaje("¡Sede registrada exitosamente!");
+            mostrarMensaje("¡Sede registrada exitosamente! ✔");
         }
     }
     // Función para registrar los datos del cliente
@@ -132,7 +132,7 @@ public class Main {
         String correo = pedirTexto("Correo Electrónico:");
 
         if (empresa.registrarCliente(new Cliente(id, nombre, telefono, correo))) {
-            mostrarMensaje("¡Cliente registrado exitosamente!");
+            mostrarMensaje("¡Cliente registrado exitosamente! ✔");
         }
     }
     // Función para registrar los datos de  los equipos, con cada uno de las 3 opciones que tenemos (camara,dron, kit)
@@ -155,10 +155,10 @@ public class Main {
             empresa.registrarEquipo(new Dron(codigo, marca, modelo, EstadoEquipo.DISPONIBLE, autonomia, bateriaAdicional));
         } else if (tipo == 3) {
             int luces = pedirEntero("Cantidad de luces:");
-            boolean controlInalambrico = pedirBoolean("¿Tiene control inalámbrico?");
+            boolean controlInalambrico = pedirBoolean("¿Tiene control inalambrico?");
             empresa.registrarEquipo(new KitIluminacion(codigo, marca, modelo, EstadoEquipo.DISPONIBLE, luces, controlInalambrico));
         }
-        mostrarMensaje("¡Equipo registrado exitosamente!");
+        mostrarMensaje("¡Equipo registrado exitosamente! ✔");
     }
     // Función para registrar los datos del operador
     private static void registrarOperador(Empresa empresa) {
@@ -169,7 +169,7 @@ public class Main {
         String experiencia = pedirTexto("Años de Experiencia:");
 
         if (empresa.registrarOperador(new Operador(id, nombre, certificacion, experiencia))) {
-            mostrarMensaje("¡Operador registrado exitosamente!");
+            mostrarMensaje("¡Operador registrado exitosamente! ✔");
         }
     }
     // creacion de la reserva, con su turno y  cliente respectivo
@@ -182,7 +182,7 @@ public class Main {
 
         Cliente cliente = empresa.buscarClientePorId(idCliente);
         if (cliente == null) {
-            mostrarMensaje("⚠️ Error: El cliente con cedula '" + idCliente + "' no existe.");
+            mostrarMensaje("⚠ Error ⚠ El cliente con cedula: '" + idCliente + "' no existe.");
             return;
         }
 
@@ -191,7 +191,7 @@ public class Main {
 
         int turnoNum = pedirEntero("Seleccione el número del Turno:\n1. MANIANA\n2. TARDE\n3. NOCHE");
         if (turnoNum < 1 || turnoNum > 3) {
-            mostrarMensaje("⚠️ Error: Opción de turno no válida.");
+            mostrarMensaje("⚠ Error⚠ Opción de turno no válida.");
             return;
         }
 
@@ -203,6 +203,133 @@ public class Main {
             mostrarMensaje("¡Reserva creada exitosamente en estado SOLICITADA!");
         }
     }
+    priavte static void agregarEquipoAReserva(Empresa empresa){
+        String idReserva = pedirTexto("Codigo de la reserva: ");
+        Reserva reserva = empresa.buscarReservaPorId(idReserva);
+        if (reserva == null) {
+            mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
+            return;
+        }
+        String codigoEquiAudi = pedirTexto("Codigo del equipo a agregar: ");
+        EquipoAudiovisual eq = empresa.buscarEquipoPorCodigo(codigoEquiAudi);
+        if (eq == null){
+            mostrarMensaje("⚠ Error ⚠ Equipo no encontrado ");
+            return;
+        }
+        int horas = pedirEntero("Cantidad de horas de alquiler:");
+        if (horas <= 0){
+            mostrarMensaje("⚠ Error ⚠ Las horas de aqluiler deben ser mayores a 0 ");
+            return;
+        }
+        if (reserva.agregarEquipo(eq, horas)) {
+            mostrarMensaje("¡Equipo agregado a la reserva exitosamente! ✔");
+        }
+    }
+    private static void asignarOperadorReserva(Empresa empresa){
+        String idReserva= pedirTexto("Codigo de la reserva: ");
+        Reserva res = empresa.buscarReservaPorId(idReserva);
+        if (res == null) {
+            mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
+            return;
+        }
+        String idOperador = pedirTexto("Id del operador a asignar: ");
+        Operador op = empresa.buscarOperadorPorId(idOperador);
+        if (op == null) {
+            mostrarMensaje("⚠ Error ⚠ Operador no encontrado ");
+            return;
+        }
+        res.asignarOperador(op);
+        mostrarMensaje("Operador asignado exitosamente! ✔");
+    }
 
+    private static void cambiarEstadoReserva(Empresa empresa){
+        String idReserva = pedirTexto("Codigo de la reserva a modificar: ");
+        Reserva res = empresa.buscarReservaPorId(idReserva);
+        if (res == null) {
+            mostrarMensaje("⚠ Error ⚠ Operador no encontrado ");
+            return;
+        }
+
+        int opcionEstado = pedirEntero("Estado Actual: " + res.getEstado() + "\n Seleccione el nuevo Estado:\n"
+                + "1. CONFIRMADA\n"
+                + "2. CANCELADA\n"
+                + "3. FINALIZADA");
+        EstadoReserva nuevoEstado = null;
+        if (opcionEstado == 1) nuevoEstado = EstadoReserva.CONFIRMADA;
+        else if (opcionEstado == 2) nuevoEstado = EstadoReserva.CANCELADA;
+        else if (opcionEstado == 3) nuevoEstado = EstadoReserva.FINALIZADA;
+        else return;
+
+        if (empresa.cambiarEstadoReserva(idReserva, nuevoEstado)) {
+            mostrarMensaje("¡Estado de la reserva actualizado a " + nuevoEstado + "!");
+        }
+    }
+    private static void consultarEquiposDisponibles(Empresa empresa) {
+        LocalDate fecha = pedirFecha("Consulta de disponibilidad ");
+        if (fecha == null)
+            return;
+        int tNum = pedirEntero("Seleccione el Turno:\n" +
+                "1. Maniana\n" +
+                "2. Tarde \n" +
+                "3. Noche");
+        if (tNum < 1 || tNum > 3) {
+            mostrarMensaje("⚠ Error ⚠  Opcion de turno no valida.");
+            return;
+        }
+
+        Turno turno = Turno.MANIANA;
+        if (tNum == 2) {
+            turno = Turno.TARDE;
+        }else if (tNum == 3){
+            turno = Turno.NOCHE;
+        }
+
+        List<EquipoAudiovisual> dispo = empresa.consultarEquiposDisponibles(fecha, turno);
+        if (dispo.isEmpty()) {
+            mostrarMensaje("No hay equipos disponibles para la fecha " + fecha + " y turno " + turno);
+            return;
+        }
+
+        String reporte = "⊹₊˚‧︵‿₊୨ Equipos disponibles ୧₊‿︵‧˚₊⊹\n\n";
+        for (EquipoAudiovisual eq : dispo) {
+            reporte += "꩜ Código: " + eq.getCodigo()
+                    + " ★ Marca: " + eq.getMarca()
+                    + " ★ Modelo: " + eq.getModelo()
+                    + " ★ Estado: " + eq.getEstado() + "\n";
+        }
+        mostrarMensaje(reporte);
+    }
+
+    private static void consultarReservasCliente(Empresa empresa) {
+        String idCliente = pedirTexto("Documento del Cliente: ");
+        if (idCliente == null || idCliente.isEmpty()) return;
+
+        List<Reserva> lista = empresa.consultarReservasCliente(idCliente);
+        if (lista.isEmpty()) {
+            mostrarMensaje("No se encontraron reservas confirmadas para el cliente: " + idCliente);
+            return;
+        }
+
+        String reporte = "‿̩͙⊱༒༻Reservas confirmadas del cliente༺༒⊰‿̩͙ \n\n";
+        for (Reserva r : lista) {
+            reporte += "✦ ID:  " + r.getId()
+                    + " ✿ Fecha: " + r.getFecha()
+                    + " ✿ Turno: " + r.getTurno()
+                    + " ✿ Total: $" + r.calcularTotal() + "\n";
+        }
+        mostrarMensaje(reporte);
+    }
+
+    private static void consultarValorReserva(Empresa empresa) {
+        String idR = pedirTexto("Codigo de la Reserva:");
+        if (idR == null || idR.isEmpty()) return;
+
+        Reserva res = empresa.buscarReservaPorId(idR);
+        if (res != null) {
+            mostrarMensaje("El valor total de la reserva " + idR + " es: $" + res.calcularTotal());
+        } else {
+            mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
+        }
+    }
 }
 
