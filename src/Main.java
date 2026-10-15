@@ -6,6 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
         Empresa empresa = new Empresa("MJC-1827", "PixelRent");
+        cargarDatosIniciales(empresa);
 
         int opcion = 0;
         do {
@@ -364,6 +365,33 @@ public class Main {
         } else {
             mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
         }
+    }
+    //datos de ejemplos para la presentacion
+    private static void cargarDatosIniciales(Empresa empresa) {
+        // 1. Registrar Sede
+        empresa.registrarSede(new Sede("SED-01", "Sede Central Armenia", "Calle 14 #15-20"));
+
+        // 2. Registrar Clientes
+        Cliente cliente1 = new Cliente("1092455777", "Mariana Mendez", "3101234567", "mariana@gmail.com");
+        Cliente cliente2 = new Cliente("1094888999", "Juan Camilo Cardona", "3209876543", "juan@gmail.com");
+        empresa.registrarCliente(cliente1);
+        empresa.registrarCliente(cliente2);
+
+        // 3. Registrar Operador
+        Operador operador1 = new Operador("OP-01", "Carlos Perez", "Licencia Dron V2", "5");
+        empresa.registrarOperador(operador1);
+
+        // 4. Registrar Equipos (Uno de cada tipo)
+        empresa.registrarEquipo(new Camara("CAM-1", "Sony", "A7IV", EstadoEquipo.DISPONIBLE, true, "4K"));
+        empresa.registrarEquipo(new Dron("DRN-1", "DJI", "Mavic 3", EstadoEquipo.DISPONIBLE, 45, true));
+        empresa.registrarEquipo(new KitIluminacion("KIT-1", "Aputure", "600d", EstadoEquipo.DISPONIBLE, 3, true));
+
+        // 5. Reserva pre-creada de ejemplo
+        Reserva Ejemplo = new Reserva("RESER-01", cliente1, LocalDate.of(2026, 10, 15), Turno.MANIANA);
+        empresa.registrarReserva(Ejemplo);
+        Ejemplo.agregarEquipo(empresa.buscarEquipoCodigo("CAM-1"), 4);
+        Ejemplo.asignarOperador(operador1);
+        empresa.cambiarEstadoReserva("RESER-01", EstadoReserva.CONFIRMADA);
     }
 }
 
