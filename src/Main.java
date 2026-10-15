@@ -203,7 +203,7 @@ public class Main {
             mostrarMensaje("¡Reserva creada exitosamente en estado SOLICITADA!");
         }
     }
-    priavte static void agregarEquipoAReserva(Empresa empresa){
+    private static void agregarEquipoAReserva(Empresa empresa){
         String idReserva = pedirTexto("Codigo de la reserva: ");
         Reserva reserva = empresa.buscarReservaPorId(idReserva);
         if (reserva == null) {
