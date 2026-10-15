@@ -9,9 +9,7 @@ public class Sede {
         this.direccion = direccion;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
+    public String getCodigo() {return codigo;}
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;

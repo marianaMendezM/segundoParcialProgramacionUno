@@ -41,7 +41,7 @@ public class Reserva {
         this.operador = operador;
     }
 
-    //calculo el subtotal
+    //calculo el total
     public double calcularTotal() {
         double total = 0.0;
         for (DetalleReserva detalle : listDetalleReserva) {
@@ -83,9 +83,7 @@ public class Reserva {
         return fecha;
     }
 
-    public Turno getTurno() {
-        return turno;
-    }
+    public Turno getTurno() {return turno;}
 
     public EstadoReserva getEstado() {
         return estado;

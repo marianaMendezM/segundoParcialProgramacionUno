@@ -15,14 +15,14 @@ public class Main {
                     + "3. Registrar equipo \n"
                     + "4. Registar operador \n"
                     + "5. Crear reserva  \n"
-                    + "6. Agregar equipo a reserva \n"
+                    + "6. Agregar equipo a reserva y mostrar costo \n"
                     + "7. Asignar operador a reserva \n"
                     + "8. Cambiar estado a reserva  \n"
-                    + "9. Comsultar equipos disponibles \n"
+                    + "9. Consultar equipos disponibles \n"
                     + "10. Consultar reservas confirmadas de clientes \n"
                     + "11. Consultar valor total de reserva \n"
                     + "12. Salir  \n"
-                    + "-> Por favor ingresar un opcion validad (1 - 12) <-"
+                    + "-> Por favor ingresar un opcion validad (1 - 12) <- \n"
                     + "──────────────────────── ⋆⋅☆⋅⋆ ────────────────────────";
             opcion = pedirEntero(menu);
 
@@ -43,7 +43,7 @@ public class Main {
                     crearReserva(empresa);
                     break;
                 case 6:
-                    agregarEquipoAReserva(empresa);
+                    agregarEquipoReserva(empresa);
                     break;
                 case 7:
                     asignarOperadorReserva(empresa);
@@ -180,16 +180,15 @@ public class Main {
         String idCliente = pedirTexto("Cedula del Cliente:");
         if (idCliente == null || idCliente.isEmpty()) return;
 
-        Cliente cliente = empresa.buscarClientePorId(idCliente);
+        Cliente cliente = empresa.buscarClienteId(idCliente);
         if (cliente == null) {
             mostrarMensaje("⚠ Error ⚠ El cliente con cedula: '" + idCliente + "' no existe.");
             return;
         }
-
         LocalDate fecha = pedirFecha("CREACIÓN DE RESERVA");
         if (fecha == null) return;
 
-        int turnoNum = pedirEntero("Seleccione el número del Turno:\n1. MANIANA\n2. TARDE\n3. NOCHE");
+        int turnoNum = pedirEntero("Seleccione el número del Turno:\n1. MAÑANA\n2. TARDE\n3. NOCHE");
         if (turnoNum < 1 || turnoNum > 3) {
             mostrarMensaje("⚠ Error⚠ Opción de turno no válida.");
             return;
@@ -203,37 +202,65 @@ public class Main {
             mostrarMensaje("¡Reserva creada exitosamente en estado SOLICITADA!");
         }
     }
-    private static void agregarEquipoAReserva(Empresa empresa){
+    //agrega el equipo a la reserva
+    private static void agregarEquipoReserva(Empresa empresa) {
         String idReserva = pedirTexto("Codigo de la reserva: ");
-        Reserva reserva = empresa.buscarReservaPorId(idReserva);
+        if (idReserva == null || idReserva.isEmpty()) return;
+
+        Reserva reserva = empresa.buscarReservaId(idReserva);
         if (reserva == null) {
             mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
             return;
         }
-        String codigoEquiAudi = pedirTexto("Codigo del equipo a agregar: ");
-        EquipoAudiovisual eq = empresa.buscarEquipoPorCodigo(codigoEquiAudi);
-        if (eq == null){
+        String codigoEquipoAudi = pedirTexto("Codigo del equipo a agregar: ");
+        if (codigoEquipoAudi == null || codigoEquipoAudi.isEmpty()) return;
+
+        EquipoAudiovisual eq = empresa.buscarEquipoCodigo(codigoEquipoAudi);
+        if (eq == null) {
             mostrarMensaje("⚠ Error ⚠ Equipo no encontrado ");
             return;
         }
+
         int horas = pedirEntero("Cantidad de horas de alquiler:");
-        if (horas <= 0){
-            mostrarMensaje("⚠ Error ⚠ Las horas de aqluiler deben ser mayores a 0 ");
+        if (horas <= 0) {
+            mostrarMensaje("⚠ Error ⚠ Las horas de alquiler deben ser mayores a 0 ");
             return;
         }
+
+        // Revisa que otra reserva CONFIRMADA no tenga ya este equipo en la misma fecha y turno
+        for (Reserva r : empresa.getListReserva()) {
+            if (!r.getId().equalsIgnoreCase(reserva.getId())
+                    && r.getEstado() == EstadoReserva.CONFIRMADA // Solo bloquea las reservas CONFIRMADAS
+                    && r.getFecha().equals(reserva.getFecha())
+                    && r.getTurno() == reserva.getTurno()) {
+
+                for (DetalleReserva detalle : r.getListDetalleReserva()) {
+                    if (detalle.getEquipo().getCodigo().equalsIgnoreCase(eq.getCodigo())) {
+                        mostrarMensaje("⚠ Error ⚠ El equipo '" + eq.getCodigo()
+                                + "' ya está reservado en una reserva CONFIRMADA para la fecha " + reserva.getFecha()
+                                + " en el turno " + reserva.getTurno());
+                        return; // Cancela la operación sin agregar el equipo
+                    }
+                }
+            }
+        }
+
+        // SI PASÓ LA VALIDACIÓN, SE AGREGA AQUÍ
         if (reserva.agregarEquipo(eq, horas)) {
-            mostrarMensaje("¡Equipo agregado a la reserva exitosamente! ✔");
+            mostrarMensaje("¡Equipo agregado a la reserva exitosamente! ✔\n\n"
+                    + "• Valor acumulado de la reserva: $" + reserva.calcularTotal());
         }
     }
+
     private static void asignarOperadorReserva(Empresa empresa){
         String idReserva= pedirTexto("Codigo de la reserva: ");
-        Reserva res = empresa.buscarReservaPorId(idReserva);
+        Reserva res = empresa.buscarReservaId(idReserva);
         if (res == null) {
             mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
             return;
         }
         String idOperador = pedirTexto("Id del operador a asignar: ");
-        Operador op = empresa.buscarOperadorPorId(idOperador);
+        Operador op = empresa.buscarOperadorId(idOperador);
         if (op == null) {
             mostrarMensaje("⚠ Error ⚠ Operador no encontrado ");
             return;
@@ -244,12 +271,11 @@ public class Main {
 
     private static void cambiarEstadoReserva(Empresa empresa){
         String idReserva = pedirTexto("Codigo de la reserva a modificar: ");
-        Reserva res = empresa.buscarReservaPorId(idReserva);
+        Reserva res = empresa.buscarReservaId(idReserva);
         if (res == null) {
             mostrarMensaje("⚠ Error ⚠ Operador no encontrado ");
             return;
         }
-
         int opcionEstado = pedirEntero("Estado Actual: " + res.getEstado() + "\n Seleccione el nuevo Estado:\n"
                 + "1. CONFIRMADA\n"
                 + "2. CANCELADA\n"
@@ -269,9 +295,9 @@ public class Main {
         if (fecha == null)
             return;
         int tNum = pedirEntero("Seleccione el Turno:\n" +
-                "1. Maniana\n" +
-                "2. Tarde \n" +
-                "3. Noche");
+                "1. MAÑANA\n" +
+                "2. TARDE \n" +
+                "3. NOCHE");
         if (tNum < 1 || tNum > 3) {
             mostrarMensaje("⚠ Error ⚠  Opcion de turno no valida.");
             return;
@@ -284,7 +310,7 @@ public class Main {
             turno = Turno.NOCHE;
         }
 
-        List<EquipoAudiovisual> dispo = empresa.consultarEquiposDisponibles(fecha, turno);
+        List<EquipoAudiovisual> dispo = empresa.consultarEquipoDisponible(fecha, turno);
         if (dispo.isEmpty()) {
             mostrarMensaje("No hay equipos disponibles para la fecha " + fecha + " y turno " + turno);
             return;
@@ -299,17 +325,15 @@ public class Main {
         }
         mostrarMensaje(reporte);
     }
-
     private static void consultarReservasCliente(Empresa empresa) {
         String idCliente = pedirTexto("Documento del Cliente: ");
         if (idCliente == null || idCliente.isEmpty()) return;
 
-        List<Reserva> lista = empresa.consultarReservasCliente(idCliente);
+        List<Reserva> lista = empresa.consultarReservaCliente(idCliente);
         if (lista.isEmpty()) {
             mostrarMensaje("No se encontraron reservas confirmadas para el cliente: " + idCliente);
             return;
         }
-
         String reporte = "‿̩͙⊱༒༻Reservas confirmadas del cliente༺༒⊰‿̩͙ \n\n";
         for (Reserva r : lista) {
             reporte += "✦ ID:  " + r.getId()
@@ -319,14 +343,18 @@ public class Main {
         }
         mostrarMensaje(reporte);
     }
-
     private static void consultarValorReserva(Empresa empresa) {
         String idR = pedirTexto("Codigo de la Reserva:");
         if (idR == null || idR.isEmpty()) return;
 
-        Reserva res = empresa.buscarReservaPorId(idR);
-        if (res != null) {
-            mostrarMensaje("El valor total de la reserva " + idR + " es: $" + res.calcularTotal());
+        Reserva resultado = empresa.buscarReservaId(idR);
+        if (resultado != null) {
+            mostrarMensaje(" CONSULTA DE VALOR EN TIEMPO REAL \n\n"
+                    + "• Reserva ID: " + resultado.getId() + "\n"
+                    + "• Estado actual: " + resultado.getEstado() + "\n"
+                    + "• Equipos agregados: " + resultado.getListDetalleReserva().size() + "\n"
+                    + "-----------------------------------\n"
+                    + "• Valor Total Acumulado: $" + resultado.calcularTotal());
         } else {
             mostrarMensaje("⚠ Error ⚠ Reserva no encontrada ");
         }

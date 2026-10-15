@@ -11,7 +11,7 @@ public class Empresa {
     private List<Operador> listOperador;
     private List<Reserva> listReserva;
 
-    public Empresa(String id, String nombre) {
+    public Empresa(String nit, String nombre) {
         this.nit = nit;
         this.nombre = nombre;
         this.listSede = new ArrayList<>();
@@ -79,7 +79,7 @@ public class Empresa {
     // una finalizada y cancelada no puede pasar a confirmada
     //contener al menos un equipo la reserva
     public boolean cambiarEstadoReserva(String idReserva, EstadoReserva nuevoEstado) {
-        Reserva reserva = buscarReservaPorId(idReserva);
+        Reserva reserva = buscarReservaId(idReserva);
         if (reserva == null) {
             javax.swing.JOptionPane.showMessageDialog(null, "Error: Reserva no encontrada.");
             return false;
@@ -122,7 +122,7 @@ public class Empresa {
         return reserva.setEstado(nuevoEstado);
     }
 
-    public List<EquipoAudiovisual> consultarEquiposDisponibles(LocalDate fecha, Turno turno) {
+    public List<EquipoAudiovisual> consultarEquipoDisponible(LocalDate fecha, Turno turno) {
         List<EquipoAudiovisual> disponibles = new ArrayList<>();
         for (EquipoAudiovisual eq : listEquipoAudiovisual) {
             if (eq.getEstado() == EstadoEquipo.DISPONIBLE) {
@@ -148,7 +148,7 @@ public class Empresa {
         return disponibles;
     }
     //se consulta que reservas tiene un cliente por medio de la cedula
-    public List<Reserva> consultarReservasCliente(String idCliente) {
+    public List<Reserva> consultarReservaCliente(String idCliente) {
         List<Reserva> delCliente = new ArrayList<>();
         for (Reserva r : listReserva) {
             if (r.getCliente().cedula().equalsIgnoreCase(idCliente) && r.getEstado() == EstadoReserva.CONFIRMADA) {
@@ -158,7 +158,7 @@ public class Empresa {
         return delCliente;
     }
 
-    public Reserva buscarReservaPorId(String idReserva) {
+    public Reserva buscarReservaId(String idReserva) {
         for (Reserva r : listReserva) {
             if (r.getId().equalsIgnoreCase(idReserva)) {
                 return r;
@@ -167,7 +167,7 @@ public class Empresa {
         return null;
     }
 
-    public EquipoAudiovisual buscarEquipoPorCodigo(String codigo) {
+    public EquipoAudiovisual buscarEquipoCodigo(String codigo) {
         for (EquipoAudiovisual eq : listEquipoAudiovisual) {
             if (eq.getCodigo().equalsIgnoreCase(codigo)) {
                 return eq;
@@ -176,7 +176,7 @@ public class Empresa {
         return null;
     }
 
-    public Cliente buscarClientePorId(String id) {
+    public Cliente buscarClienteId(String id) {
         for (Cliente c : listCliente) {
             if (c.cedula().equalsIgnoreCase(id)) {
                 return c;
@@ -185,7 +185,7 @@ public class Empresa {
         return null;
     }
 
-    public Operador buscarOperadorPorId(String id) {
+    public Operador buscarOperadorId(String id) {
         for (Operador op : listOperador) {
             if (op.getId().equalsIgnoreCase(id)) {
                 return op;
@@ -197,4 +197,5 @@ public class Empresa {
     public String getNit() { return nit; }
     public String getNombre() { return nombre; }
     public List<Sede> getListSede() { return listSede; }
+    public List<Reserva> getListReserva(){return listReserva;}
 }

@@ -3,7 +3,6 @@ public class KitIluminacion extends EquipoAudiovisual {
     private boolean controlInalambrico;
     private double costoHora ;
 
-    // Constructor 1: Asigna tarifa por defecto de $10.000 (Usado en el Main)
     public KitIluminacion(String codigo, String marca, String modelo, EstadoEquipo estado, int cantidadLuces, boolean controlInalambrico) {
         super(codigo, marca, modelo, estado);
         this.cantidadLuces = cantidadLuces;
